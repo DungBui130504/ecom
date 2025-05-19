@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios';
 import { Carousel } from 'react-bootstrap';
 import '../../css/items/itemDetail.css';
 import { FiPlus } from "react-icons/fi";
@@ -11,6 +12,26 @@ const ItemDetail = ({ oneProductData }) => {
     const [productQuantity, setProductQuantity] = useState(1);
     // console.log(oneProductData);
 
+    // Xu ly them san pham vao gio hang
+    const handleAddToCart = async () => {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const ID = oneProductData.ProductID;
+        if (productQuantity === 0) {
+            window.alert('Bạn phải chọn số lượng mua ít nhất là 1 !');
+            return;
+        }
+        // console.log(`${backendUrl}/cart/addCart`);
+
+        try {
+            const cartRes = await axios.post(`${backendUrl}/cart/addCart`, { ID, productQuantity }, { withCredentials: true });
+            // console.log(cartRes.data);
+
+        }
+        catch (error) {
+            console.log('Cannot add product to cart');
+            throw error;
+        }
+    }
 
     // Xu ly anh loi
     useEffect(() => {
@@ -73,7 +94,7 @@ const ItemDetail = ({ oneProductData }) => {
                             } > <FaMinus /></button>
                         </div>
                         {productQuantity == 0 && <p style={{ color: 'red', fontStyle: 'italic' }}>Bạn phải chọn ít nhất 1 sản phẩm!</p>}
-                        <button className='button-89'>Thêm vào giỏ hàng</button>
+                        <button className='button-89' onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
                         <button className='button-86'>Mua sản phẩm này</button>
                     </div>
                 </div>

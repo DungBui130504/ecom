@@ -108,7 +108,7 @@ const Body = ({ cateProduct, favProduct }) => {
                 <p>Không có sản phẩm yêu thích nào!!!</p>
             </div>}
 
-            {favProduct == 1 && <Item products={favProductData} oneProductData={handleOneProductDetail} />}
+            {favProduct == 1 && <Item products={favProductData} oneProductData={handleOneProductDetail} hanleClickProduct={hanleClickProduct} />}
 
             {favProduct == 1 &&
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '50px' }}>
