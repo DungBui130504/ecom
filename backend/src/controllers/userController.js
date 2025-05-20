@@ -11,7 +11,9 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUser = async (req, res) => {
     try {
-        const ID = req.cookies.ID;
+        console.log(req.user);
+
+        const ID = req.user.UserID;
         const users = await UserModel.getUser(ID);
         res.json(users);
     } catch (error) {
@@ -33,8 +35,7 @@ exports.delUser = async (req, res) => {
 exports.changeInfor = async (req, res) => {
     try {
         const newInfor = req.body;
-        const UserID = req.cookies.ID;
-        // console.log(UserID);
+        const UserID = req.user.UserID;
 
         const change = await UserModel.changeInfor(newInfor, UserID);
         res.json(change);
@@ -46,7 +47,7 @@ exports.changeInfor = async (req, res) => {
 exports.changeAccountInfor = async (req, res) => {
     try {
         const newInfor = req.body;
-        const UserID = req.cookies.ID;
+        const UserID = req.user.UserID;
         // console.log(UserID);
         // console.log(newInfor);
 
@@ -60,7 +61,7 @@ exports.changeAccountInfor = async (req, res) => {
 exports.changeAddress = async (req, res) => {
     try {
         const newInfor = req.body;
-        const UserID = req.cookies.ID;
+        const UserID = req.user.UserID;
         // console.log(UserID);
         // console.log(newInfor);
 

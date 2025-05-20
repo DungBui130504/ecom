@@ -31,10 +31,18 @@ CREATE TABLE Products (
     Price DECIMAL(18, 2) NOT NULL,
     Sales INT DEFAULT 0, 
     ImageUrl NVARCHAR(255),
-    IsFavorite BIT DEFAULT 0, -- Thêm thuộc tính sản phẩm yêu thích
     CreatedAt DATETIME DEFAULT GETDATE(),
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
 );
+
+CREATE TABLE UserFavorites (
+    UserID INT,
+    ProductID INT,
+    PRIMARY KEY (UserID, ProductID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
 
 CREATE TABLE Orders (
     OrderID INT IDENTITY(1,1) PRIMARY KEY,
@@ -65,3 +73,7 @@ CREATE TABLE Cart (
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
+
+ALTER TABLE Cart
+ADD CONSTRAINT UQ_Cart_User_Product UNIQUE(UserID, ProductID);
+

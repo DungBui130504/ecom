@@ -4,11 +4,14 @@ import '../../css/items/ItemTemplate.css'
 import { FaStar } from "react-icons/fa6";
 import { IoIosHeartEmpty } from "react-icons/io";
 import { IoMdHeart } from "react-icons/io";
+import { Link } from 'react-router-dom';
 
-const ItemTemplate = ({ productItem, oneProductData, hanleClickProduct }) => {
+const ItemTemplate = ({ productItem, oneProductData, hanleClickProduct, handleShowBanner, fav }) => {
     const [itemData, setItemData] = useState([]);
     const [bgImage, setBgImage] = useState('');
     const [isFav, setIsFav] = useState(false);
+
+    // console.log(productItem.isFav);
 
     // Gio han ten
     function truncateText(text, maxLength) {
@@ -63,7 +66,7 @@ const ItemTemplate = ({ productItem, oneProductData, hanleClickProduct }) => {
 
     // Xu ly fav icon
     useEffect(() => {
-        if (productItem.IsFavorite) {
+        if (productItem.isFav || fav) {
             setIsFav(true);
         }
         else {
@@ -84,7 +87,7 @@ const ItemTemplate = ({ productItem, oneProductData, hanleClickProduct }) => {
 
             {/* Nội dung dưới hình ảnh */}
             <div style={{ color: 'black', padding: '10px' }}>
-                <a href='#' className='name-hover' onClick={() => handleClickProduct(productItem)}>{truncateText(productItem.ProductName, 16)}</a>
+                <a className='name-hover' onClick={() => { handleClickProduct(productItem); handleShowBanner(false) }}>{truncateText(productItem.ProductName, 16)}</a>
                 <p>4 <FaStar /></p>
                 <p>{productItem.Price} VNĐ</p>
             </div>

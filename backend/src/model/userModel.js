@@ -98,6 +98,9 @@ exports.login = async (user) => {
 
         const { Username, PasswordHash } = user;
 
+        // console.log(user);
+
+
         // Thực hiện truy vấn
         const result = await pool.request()
             .input('Username', sql.NVarChar, Username)
@@ -108,6 +111,7 @@ exports.login = async (user) => {
 
         // Trả về kết quả
         console.log('Checking user...');
+        // console.log(result.recordset);
         return result.recordset;
     }
     catch (err) {
@@ -122,14 +126,14 @@ exports.changeInfor = async (newInfor, UserID) => {
         // Kết nối với database
         const pool = await poolPromise;
 
-        const { FullName, Email, Phone } = newInfor;
+        // console.log(newInfor.FullName);
 
         // Thực hiện truy vấn
         const result = await pool.request()
             .input('UserID', sql.Int, UserID)
-            .input('FullName', sql.NVarChar, FullName)
-            .input('Email', sql.NVarChar, Email)
-            .input('Phone', sql.NVarChar, Phone)
+            .input('FullName', sql.NVarChar, newInfor.FullName)
+            .input('Email', sql.NVarChar, newInfor.Email)
+            .input('Phone', sql.NVarChar, newInfor.Phone)
             .query(`
                 UPDATE Users SET FullName = @FullName, Email = @Email, Phone = @Phone WHERE UserID = @UserID;
             `);

@@ -1,18 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const { authenticateToken } = require('../middleware/authMiddleware.js');
 
 router.get('/users', userController.getAllUsers);
 
-router.get('/user', userController.getUser);
+router.get('/user', authenticateToken, userController.getUser);
 
-router.delete('/delUser', userController.delUser);
+router.delete('/delUser', authenticateToken, userController.delUser);
 
-router.post('/changeUserInfor', userController.changeInfor);
+router.post('/changeUserInfor', authenticateToken, userController.changeInfor);
 
-router.post('/changeAccountInfor', userController.changeAccountInfor);
+router.post('/changeAccountInfor', authenticateToken, userController.changeAccountInfor);
 
-router.post('/changeAddress', userController.changeAddress);
+router.post('/changeAddress', authenticateToken, userController.changeAddress);
 
 
 module.exports = router;

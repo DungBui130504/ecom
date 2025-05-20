@@ -1,0 +1,35 @@
+.cart-table {
+    border: none;
+}
+
+th {
+    border: none;
+    height: 50px;
+}
+
+td {
+    border: none;
+    height: 120px;
+}
+
+th,
+td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+}
+
+.icon1,
+.icon2 {
+    font-size: 30px;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.icon1:hover {
+    background-color: rgb(171, 255, 199);
+}
+
+.icon2:hover {
+    background-color: rgb(255, 161, 166);
+}

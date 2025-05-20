@@ -18,6 +18,9 @@ exports.login = async (req, res) => {
 
         const { Username, PasswordHash } = req.body;
 
+        // console.log({ Username, PasswordHash });
+
+
         if (!Username.trim() || !PasswordHash.trim()) {
             return res.status(400).json({ message: 'Thiếu tên đăng nhập hoặc mật khẩu' });
         }
@@ -28,36 +31,30 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Không tìm thấy người dùng!' });
         }
 
-        const payload = { Username: login[0].Username, PasswordHash: login[0].PasswordHash, FullName: login[0].FullName, Email: login[0].Email, Phone: login[0].Phone, Address: login[0].Address, Role: login[0].Role };
+        // console.log(login[0].UserID);
 
-        // console.log(payload);
+        const payload = { UserID: login[0].UserID, FullName: login[0].FullName, Role: login[0].Role }
 
         const accessToken = generateAccessToken(payload);
 
-        const refreshToken = generateRefreshToken(payload);
+        // console.log(accessToken);
 
         // Gửi token qua cookie
-        // res.cookie('refreshToken', refreshToken, {
+        // res.cookie('usr', login[0].UserID, {
         //     httpOnly: true, // Cookie không thể truy cập từ JavaScript phía client
-        //     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 ngày
+        //     maxAge: 20 * 60 * 1000, // 20 phút
         //     sameSite: 'lax', // hoặc 'none' nếu dùng HTTPS
         //     secure: false // nếu đang test ở localhost. Đặt true nếu là HTTPS
-        // });
+        // })
 
-        res.cookie('accessToken', accessToken, {
+        res.cookie('atn', accessToken, {
             httpOnly: true, // Cookie không thể truy cập từ JavaScript phía client
             maxAge: 20 * 60 * 1000, // 20 phút
             sameSite: 'lax', // hoặc 'none' nếu dùng HTTPS
             secure: false // nếu đang test ở localhost. Đặt true nếu là HTTPS
-        });
-
-        res.cookie('ID', login[0].UserID, {
-            httpOnly: true, // Cookie không thể truy cập từ JavaScript phía client
-            sameSite: 'lax', // hoặc 'none' nếu dùng HTTPS
-            secure: false // nếu đang test ở localhost. Đặt true nếu là HTTPS
         })
 
-        res.json({ Username: login[0].Username, accessToken });
+        res.json({ Username: login[0].FullName, accessToken });
     }
     catch (error) {
         res.status(500).json({ error: error.message });
@@ -66,7 +63,9 @@ exports.login = async (req, res) => {
 
 // Kiểm tra token (kiểm tra xem người dùng đã đăng nhập hay chưa)
 exports.checkLogin = async (req, res) => {
-    const token = req.cookies.accessToken;  // Lấy token từ cookie
+    const token = req.cookies.atn;  // Lấy token từ cookie
+
+    // console.log(token);
 
     if (!token) {
         return res.status(401).json({ message: 'Chưa đăng nhập' });
@@ -100,12 +99,17 @@ exports.logout = async (req, res) => {
     //     sameSite: 'Strict', // Thiết lập bảo mật
     // });
 
-    res.clearCookie('accessToken', {
-        httpOnly: true,
-        sameSite: 'Strict', // Thiết lập bảo mật
-    });
+    // res.clearCookie('accessToken', {
+    //     httpOnly: true,
+    //     sameSite: 'Strict', // Thiết lập bảo mật
+    // });
 
-    res.clearCookie('ID', {
+    // res.clearCookie('usr', {
+    //     httpOnly: true,
+    //     sameSite: 'Strict', // Thiết lập bảo mật
+    // });
+
+    res.clearCookie('atn', {
         httpOnly: true,
         sameSite: 'Strict', // Thiết lập bảo mật
     });
