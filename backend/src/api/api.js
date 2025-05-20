@@ -5,6 +5,7 @@ const authRouter = require('../routes/authRouter.js');
 const productRouter = require('../routes/productRouter.js');
 const categoryRouter = require('../routes/categoryRouter.js');
 const cartRouter = require('../routes/cartRouter.js');
+const { authenticateToken } = require('../middleware/authMiddleware.js');
 
 api.get('/', (req, res) => {
     const forwardedIp = req.headers['x-forwarded-for'] || req.ip
@@ -21,7 +22,7 @@ api.get("/ping", (req, res) => {
     });
 })
 
-api.use('/cart', cartRouter);
+api.use('/cart', authenticateToken, cartRouter);
 
 api.use('/category', categoryRouter);
 

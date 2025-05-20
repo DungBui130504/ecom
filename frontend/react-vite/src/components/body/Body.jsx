@@ -1,20 +1,30 @@
-import React, { useState, useEffect } from 'react'
-import axios, { all } from 'axios';
+import React, { useState, useEffect, useRef } from 'react'
+import axios from 'axios';
 import '../../css/body/body.css'
 import Item from '../items/Item'
 import ItemDetail from '../items/ItemDetail';
+import Cart from '../cart/Cart';
 
-const Body = ({ cateProduct, favProduct }) => {
+const Body = ({ cateProduct, favProduct, handleShowBanner, showCart, handleShowCart }) => {
     const [allData, setAllData] = useState([]);
     const [productsData, setProductsData] = useState([]);
     const [favProductData, setFavProductData] = useState([]);
+    const [cartData, setCartData] = useState([]);
     const [more, setMore] = useState(24);
     const [isOut, setIsOut] = useState(false);
     const [noData, setNoData] = useState(false);
     const [noFavData, setNoFavData] = useState(true);
     const [oneProductData, setOneProductData] = useState({});
     const [isDisplayProduct, setIsDisplayProduct] = useState(0);
-    const [cartInfor, setCartInfor] = useState({});
+
+    const detailRef = useRef(null);
+
+    // Scroll khi selectedProductId thay đổi
+    useEffect(() => {
+        if (detailRef.current) {
+            detailRef.current.scrollIntoView();
+        }
+    }, [oneProductData]);
 
 
     const handleGetMoreProducts = () => {
@@ -94,7 +104,7 @@ const Body = ({ cateProduct, favProduct }) => {
                 }
             }
             catch (error) {
-                console.log('Cannot get products infor');
+                console.log('Cannot get favorite product');
                 throw error;
             }
         }
@@ -102,51 +112,87 @@ const Body = ({ cateProduct, favProduct }) => {
         getFavProducts();
     }, [favProduct]);
 
+    useEffect(() => {
+        if (showCart === true) {
+            handleShowBanner(false);
+        }
+        const getCartProduct = async () => {
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
+            try {
+                const productResponse = await axios.get(`${backendUrl}/cart/carts`, { withCredentials: true });
+                // console.log(productResponse.data[0]);
+                setCartData(productResponse.data[0])
+
+            }
+            catch (error) {
+                console.log('Cannot get cart product');
+                throw error;
+            }
+        }
+
+        getCartProduct();
+    }, [showCart]);
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {noFavData && favProduct == 1 && <div className='container-fluid' style={{ height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <p>Không có sản phẩm yêu thích nào!!!</p>
-            </div>}
 
-            {favProduct == 1 && <Item products={favProductData} oneProductData={handleOneProductDetail} hanleClickProduct={hanleClickProduct} />}
+            {!showCart ?
 
-            {favProduct == 1 &&
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '50px' }}>
-                    <div style={{ background: 'black', width: '30vw', height: '1px' }}></div>
-                    <p>Xem thêm</p>
-                    <div style={{ background: 'black', width: '30vw', height: '1px' }}></div>
+                <>
+                    {isDisplayProduct == true &&
+                        <div ref={detailRef}>
+                            <ItemDetail oneProductData={oneProductData} handleShowCart={handleShowCart} />
+                        </div>
+                    }
+
+                    {noFavData && favProduct == 1 && <div className='container-fluid' style={{ height: '15vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <p>Không có sản phẩm yêu thích nào!!!</p>
+                    </div>}
+
+                    {favProduct == 1 && <Item products={favProductData} oneProductData={handleOneProductDetail} hanleClickProduct={hanleClickProduct} handleShowBanner={handleShowBanner} fav={true} />}
+
+                    {favProduct == 1 &&
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '50px' }}>
+                            <div style={{ background: 'black', width: '30vw', height: '1px' }}></div>
+                            <p>Xem thêm</p>
+                            <div style={{ background: 'black', width: '30vw', height: '1px' }}></div>
+                        </div>
+                    }
+
+                    <div className='container-fluid' style={{
+                        backgroundImage: 'url(/images/no-data.gif)',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: 'contain',
+                        height: '50vh',
+                        width: '90vw',
+                        display: noData ? 'block' : 'none',
+                        textAlign: 'center'
+                    }}></div>
+
+                    <Item products={productsData} oneProductData={handleOneProductDetail} hanleClickProduct={hanleClickProduct} handleShowBanner={handleShowBanner} fav={false} />
+
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        padding: '15px'
+                    }}>
+                        <button className='more-btn' onClick={handleGetMoreProducts}
+                            style={{
+                                display: isOut ? 'none' : 'block',
+                                marginTop: '30px'
+                            }}
+                        >View More</button>
+                    </div>
+                </>
+                :
+                <div>
+                    <Cart cartData={cartData} />
                 </div>
             }
 
-            {isDisplayProduct == true && <ItemDetail oneProductData={oneProductData} />}
-
-            <div className='container-fluid' style={{
-                backgroundImage: 'url(/images/no-data.gif)',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'contain',
-                height: '50vh',
-                width: '90vw',
-                display: noData ? 'block' : 'none',
-                textAlign: 'center'
-            }}></div>
-
-            <Item products={productsData} oneProductData={handleOneProductDetail} hanleClickProduct={hanleClickProduct} />
-
-            <div style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                padding: '15px'
-            }}>
-                <button className='more-btn' onClick={handleGetMoreProducts}
-                    style={{
-                        display: isOut ? 'none' : 'block',
-                        marginTop: '30px'
-                    }}
-                >View More</button>
-            </div>
         </div>
     )
 }

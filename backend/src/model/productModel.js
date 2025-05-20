@@ -1,10 +1,27 @@
 const { poolPromise, sql } = require('../database/dbConfig');
-
-exports.products = async () => {
+exports.products = async (userID) => {
     try {
         const pool = await poolPromise;
 
-        const result = await pool.request().query("Select * from Products");
+        let result;
+        if (userID) {
+            result = await pool.request()
+                .input('UserID', userID)
+                .query(`
+                    SELECT 
+                        p.*,
+                        CASE 
+                            WHEN uf.UserID IS NOT NULL THEN 1 
+                            ELSE 0 
+                        END AS isFav
+                    FROM Products p
+                    LEFT JOIN UserFavorites uf
+                        ON p.ProductID = uf.ProductID AND uf.UserID = @UserID;
+                `);
+        } else {
+            result = await pool.request()
+                .query(`SELECT * FROM Products`);
+        }
 
         console.log("Getting all products");
         return result.recordset;
@@ -12,7 +29,8 @@ exports.products = async () => {
         console.log(error);
         throw error;
     }
-}
+};
+
 
 exports.getProductByCategoriy = async (ID) => {
     try {
@@ -31,13 +49,17 @@ exports.getProductByCategoriy = async (ID) => {
     }
 }
 
-exports.setFavProduct = async (ID) => {
+exports.setFavProduct = async (ID, UserID) => {
     try {
         const pool = await poolPromise;
 
         const result = await pool.request()
             .input("ProductID", sql.Int, ID)
-            .query("UPDATE Products SET IsFavorite = 1 WHERE ProductID = @ProductID ");
+            .input("UserID", sql.Int, UserID)
+            .query(`
+                INSERT INTO UserFavorites (UserID, ProductID)
+                VALUES (@UserID, @ProductID);
+            `);
 
         console.log("Set favorite products from products");
         return result.recordset;
@@ -48,13 +70,17 @@ exports.setFavProduct = async (ID) => {
     }
 }
 
-exports.resetFavProduct = async (ID) => {
+exports.resetFavProduct = async (ID, UserID) => {
     try {
         const pool = await poolPromise;
 
         const result = await pool.request()
             .input("ProductID", sql.Int, ID)
-            .query("UPDATE Products SET IsFavorite = 0 WHERE ProductID = @ProductID ");
+            .input("UserID", sql.Int, UserID)
+            .query(`
+                DELETE FROM UserFavorites
+                WHERE UserID = @UserID AND ProductID = @ProductID;
+            `);
 
         console.log("Reset favorite products from products");
         return result.recordset;
@@ -65,11 +91,18 @@ exports.resetFavProduct = async (ID) => {
     }
 }
 
-exports.getFavProduct = async () => {
+exports.getFavProduct = async (UserID) => {
     try {
         const pool = await poolPromise;
 
-        const result = await pool.request().query("Select * from Products where IsFavorite = 1");
+        const result = await pool.request()
+            .input("UserID", sql.Int, UserID)
+            .query(`
+            SELECT p.*
+            FROM Products p
+            INNER JOIN UserFavorites uf ON p.ProductID = uf.ProductID
+            WHERE uf.UserID = @UserID;
+            `);
 
         console.log("Getting favorite products");
         return result.recordset;

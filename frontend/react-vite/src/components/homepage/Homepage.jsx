@@ -10,6 +10,10 @@ const Homepage = () => {
 
     const [favProduct, setFavProduct] = useState(0);
 
+    const [showBanner, setShowBanner] = useState(true);
+
+    const [showCart, setShowCart] = useState(false);
+
     const handleCateProduct = (ID) => {
         setCateProduct(ID);
     }
@@ -18,11 +22,19 @@ const Homepage = () => {
         setFavProduct(status);
     }
 
+    const handleShowBanner = (status) => {
+        setShowBanner(status);
+    }
+
+    const handleShowCart = (status) => {
+        setShowCart(status)
+    }
+
     return (
         <div>
-            <Nav handleCateProduct={handleCateProduct} handleFavProduct={handleFavProduct} />
-            <Banner />
-            <Body cateProduct={cateProduct} favProduct={favProduct} />
+            <Nav handleCateProduct={handleCateProduct} handleFavProduct={handleFavProduct} handleShowCart={handleShowCart} />
+            {showBanner == true && <Banner />}
+            <Body cateProduct={cateProduct} favProduct={favProduct} handleShowBanner={handleShowBanner} showCart={showCart} handleShowCart={handleShowCart}/>
             <Footer />
         </div>
     )

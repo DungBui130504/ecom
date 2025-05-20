@@ -7,7 +7,7 @@ import { HiOutlineMinusSm } from "react-icons/hi";
 import { FaMinus } from 'react-icons/fa';
 import { Prev } from 'react-bootstrap/esm/PageItem';
 
-const ItemDetail = ({ oneProductData }) => {
+const ItemDetail = ({ oneProductData, handleShowCart }) => {
     const [bgImage, setBgImage] = useState('');
     const [productQuantity, setProductQuantity] = useState(1);
     // console.log(oneProductData);
@@ -25,10 +25,31 @@ const ItemDetail = ({ oneProductData }) => {
         try {
             const cartRes = await axios.post(`${backendUrl}/cart/addCart`, { ID, productQuantity }, { withCredentials: true });
             // console.log(cartRes.data);
+            window.alert('Thêm vào giỏ hàng thành công!')
 
         }
         catch (error) {
-            console.log('Cannot add product to cart');
+            window.alert('Bạn cần đăng nhập để thực hiện chức năng này!');
+            throw error;
+        }
+    }
+
+    // Xu ly mua san pham
+    const handleBuy = async () => {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        const ID = oneProductData.ProductID;
+        if (productQuantity === 0) {
+            window.alert('Bạn phải chọn số lượng mua ít nhất là 1 !');
+            return;
+        }
+        // console.log(`${backendUrl}/cart/addCart`);
+
+        try {
+            const cartRes = await axios.post(`${backendUrl}/cart/addCart`, { ID, productQuantity }, { withCredentials: true });
+            handleShowCart(true);
+        }
+        catch (error) {
+            window.alert('Bạn cần đăng nhập để thực hiện chức năng này!');
             throw error;
         }
     }
@@ -44,12 +65,9 @@ const ItemDetail = ({ oneProductData }) => {
     return (
         <>
             <div className='item-container' style={{
-                // background: 'green',
-                marginTop: '10vh',
+                marginBottom: '1vh',
                 display: 'flex',
                 gap: '10vw',
-                justifyContent: 'space-evenly',
-                // alignItems: 'center',
                 width: '80vw'
             }}>
 
@@ -83,19 +101,23 @@ const ItemDetail = ({ oneProductData }) => {
                     </div>
                     <div className='item-btn'>
                         <div className='update-Quantity'>
-                            <button className='button-23' onClick={() => { setProductQuantity(prev => prev + 1) }}><FiPlus /></button>
-                            <p>{productQuantity}</p>
+
                             <button className='button-23' onClick={() => setProductQuantity((prev) => {
                                 if (prev === 0) {
                                     return 0;
                                 }
                                 return prev - 1;
                             })
-                            } > <FaMinus /></button>
+                            } > <HiOutlineMinusSm /></button>
+
+                            <p>{productQuantity}</p>
+
+                            <button className='button-23' onClick={() => { setProductQuantity(prev => prev + 1) }}><FiPlus /></button>
+
                         </div>
-                        {productQuantity == 0 && <p style={{ color: 'red', fontStyle: 'italic' }}>Bạn phải chọn ít nhất 1 sản phẩm!</p>}
+                        {productQuantity == 0 && <p className='quantity-alert' style={{ color: 'red', fontStyle: 'italic' }}>Bạn phải chọn ít nhất 1 sản phẩm!</p>}
                         <button className='button-89' onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
-                        <button className='button-86'>Mua sản phẩm này</button>
+                        <button className='button-86' onClick={handleBuy}>Mua sản phẩm này</button>
                     </div>
                 </div>
 

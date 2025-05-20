@@ -9,7 +9,7 @@ import Modal from 'bootstrap/js/dist/modal';
 import Menu from './Menu';
 
 
-const Nav = ({ handleCateProduct, handleFavProduct }) => {
+const Nav = ({ handleCateProduct, handleFavProduct, handleShowCart }) => {
     const searchText = 'Search for products';
 
     const [showInput, setShowInput] = useState(false);
@@ -69,7 +69,7 @@ const Nav = ({ handleCateProduct, handleFavProduct }) => {
 
             if (responseLogin.data) {
                 setIsLogin(true);
-                setLoginedName(responseLogin.data.Username);
+                setLoginedName(responseLogin.data.FullName);
             }
 
         }
@@ -92,6 +92,7 @@ const Nav = ({ handleCateProduct, handleFavProduct }) => {
             let responseLogout = await axios.post(`${backendUrl}/auth/logout`, {}, { withCredentials: true });
             // console.log(responseLogout.data);
             window.alert('Đăng xuất thành công!');
+            window.location.reload();
 
             setIsLogin(false);
             // window.location.reload();
@@ -110,7 +111,6 @@ const Nav = ({ handleCateProduct, handleFavProduct }) => {
 
     // Xu ly mo fav window
     const handleOpenFavWindow = () => {
-        console.log("Gọi handleFavProduct với 1");
         handleFavProduct(1);
     }
 
@@ -131,10 +131,10 @@ const Nav = ({ handleCateProduct, handleFavProduct }) => {
             try {
                 const res = await axios.get(`${backendUrl}/auth/check-login`, { withCredentials: true });
 
-                // console.log(res.data);
+                // console.log(res.data.user);
 
                 if (res.data.isAuthenticated) {
-                    setLoginedName(res.data.user.Username);
+                    setLoginedName(res.data.user.FullName);
                     setIsLogin(true);
                     setUser(res.data.user);
                 } else {
@@ -172,7 +172,7 @@ const Nav = ({ handleCateProduct, handleFavProduct }) => {
     return (
         <>
             <nav className="navbar navbar-expand-lg fixed-top d-flex flex-column m-0 gap-0" style={{
-                height: isOpenMenu ? '30%' : '10%',
+                height: isOpenMenu ? '35%' : '10%',
                 boxShadow: '0 0.5px 0px rgba(0, 0, 0, 0.1)', background: 'white', padding: '0', margin: '0',
                 transition: isOpenMenu ? '' : 'all 0.5s ease',
             }}>
@@ -216,8 +216,8 @@ const Nav = ({ handleCateProduct, handleFavProduct }) => {
                                 <FaRegHeart ></FaRegHeart>
                                 <span className="placeholder1">Sản phẩm yêu thích</span>
                             </button>
-                            
-                            <button className="btn btn-outline-light me-3 hover-box2" onClick={() => { window.open('/cart', '_blank') }}>
+
+                            <button className="btn btn-outline-light me-3 hover-box2" onClick={() => { handleShowCart(true) }}>
                                 <FiShoppingCart ></FiShoppingCart>
                                 <span className="placeholder2">Giỏ hàng của bạn</span>
                             </button>
@@ -226,15 +226,15 @@ const Nav = ({ handleCateProduct, handleFavProduct }) => {
                             <div className='dropdown'>
                                 <button className="btn btn-outline-light" data-bs-toggle="dropdown" aria-expanded="false" style={{ border: '1px solid #DBDBDB' }}> {loginedName}</button>
                                 <ul className="dropdown-menu dropdown-menu-end mt-2 cursor-pointer">
-                                    <li style={{ textAlign: 'left', paddingLeft: '15px' }}><a href="/" className="dropdown-item nav-link d-block d-lg-none" >Home</a></li>
+                                    <li style={{ paddingLeft: '10px', margin: '0' }}><a href="/" className="dropdown-item nav-link d-block d-lg-none" >Home</a></li>
                                     <li><button className="dropdown-item d-block d-lg-none" onClick={handleOpenFavWindow}>Sản phẩm yêu thích </button></li>
-                                    <li><button className="dropdown-item d-block d-lg-none" onClick={() => { window.open('/cart', '_blank') }}>Giỏ hàng </button></li>
+                                    <li><button className="dropdown-item d-block d-lg-none" onClick={() => { handleShowCart(true) }}>Giỏ hàng </button></li>
                                     <li><button className="dropdown-item " onClick={() => { window.open('/userInfor', '_blank') }}>Cài đặt</button></li>
                                     <li><button className="dropdown-item " onClick={handleLogout}>Đăng xuất</button></li>
                                 </ul>
                             </div>
                             :
-                            <button className="btn btn-outline-light" style={{ border: '1px solid #DBDBDB' }} onClick={openModal}> Sign In</button>
+                            <button className="btn btn-outline-light" style={{ border: '1px solid #DBDBDB' }} onClick={openModal}>Đăng nhập</button>
                         }
 
                     </div>

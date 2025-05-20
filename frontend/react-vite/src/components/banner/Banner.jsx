@@ -36,7 +36,6 @@ const Banner = () => {
                 <div className="display-2 fw-bold mb-3" style={{ maxWidth: '90vw', background: '' }}>SHOP</div>
                 <Search />
             </div>
-
         </div>
     )
 }

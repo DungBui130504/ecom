@@ -1,14 +1,14 @@
 .item-container {
-    margin-bottom: 5vh;
+    /* background-color: black; */
+    margin-top: 15vh;
+    justify-content: space-evenly;
 }
+
 
 .my-carousel {
     width: 30vw;
     height: 45vh;
-    margin-bottom: 20px;
-    /* border: 2px solid black; */
-    /* width: 90vw;
-    height: 50vh; */
+    margin-bottom: 20vh;
 }
 
 .my-carousel img {
@@ -26,21 +26,19 @@
     .item-container {
         flex-direction: column;
         margin-bottom: 5vh;
+        align-items: center;
     }
 
     .my-carousel {
         width: 100vw;
         height: 50vh;
+        margin-bottom: 5vh;
     }
 
     .name {
         margin-top: 0px;
     }
 
-    .button-86,
-    .button-89 {
-        width: 100vw;
-    }
 }
 
 @media (max-width: 344px) {
@@ -52,6 +50,7 @@
     .my-carousel {
         width: 100vw;
         height: 50vh;
+        margin-bottom: 5vh;
     }
 
     .name {
@@ -204,6 +203,31 @@ p {
     transition: 0s;
     transform: translate(0, 5%);
 }
+
+@media (max-width: 576px) {
+
+    .button-86,
+    .button-89 {
+        width: 50vw;
+    }
+
+    .quantity-alert {
+        width: 100vw;
+    }
+}
+
+@media (max-width: 344px) {
+
+    .button-86,
+    .button-89 {
+        width: 40vw;
+    }
+
+    .quantity-alert {
+        width: 100vw;
+    }
+}
+
 
 .update-Quantity {
     width: 100%;
